@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootStack() {
 
   return (
-    <Stack.Navigator initialRouteName="Register" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />

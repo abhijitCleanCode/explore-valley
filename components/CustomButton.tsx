@@ -39,6 +39,7 @@ const CustomButton = ({
     IconLeft,
     IconRight,
     className,
+    isLoading = false,
     ...props
 }: ButtonProps) => {
     return (
