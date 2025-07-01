@@ -6,7 +6,7 @@ import { apiCore } from 'services/api/apiCore';
 export const store = configureStore({
   reducer: {
     [apiCore.reducerPath]: apiCore.reducer, // all rtk query to manage its state within redux
-    auth: authSlice.reducer,
+    auth: authSlice,
   },
 
   middleware: (getdefaultMiddleware) =>

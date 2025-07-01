@@ -7,6 +7,10 @@ import envelope from './icons/envelope.png';
 import lock from './icons/lock.png';
 import signup from './icons/signup.png';
 import google from './icons/google.png';
+import home from './icons/home.png';
+import bookmark from './icons/bookmark.png';
+import search from './icons/search.png';
+import rightArrow from './icons/rightArrow.png';
 
 // onboarding images
 import onBoardingImg from './onBoardingImg.jpg';
@@ -25,8 +29,12 @@ export {
   lock,
   signup,
   google,
+  home,
+  bookmark,
+  search,
   onBoardingImg,
   onBoarding_joinus,
   logo_news_app,
   login_screen_news_app,
+  rightArrow,
 };

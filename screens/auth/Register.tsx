@@ -1,9 +1,44 @@
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { useState } from "react";
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { Formik } from 'formik';
+
 import { envelope, lock, login_screen_news_app, user } from "assets";
 import { CustomButton, InputField } from "components";
+import { RootStackParamList } from "types/navigation";
+import { useCreateUserMutation } from "services/api/authApiSlice";
+
+type registerScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
+
+interface RegisterFormData {
+    name: string;
+    email: string;
+    password: string;
+}
+
+const getErrorMessage = (error: any) => {
+    const message = error?.message || "Something went wrong";
+    return message.replace(/^AppwriteException:\s*/, "");
+}
 
 const Register = () => {
+    const navigation = useNavigation<registerScreenNavigationProp>();
+
+    const [createUser, { isLoading, isSuccess, isError, error }] = useCreateUserMutation();
+
+    const handleUserRegister = async function (data: RegisterFormData) {
+        try {
+            const response = await createUser(data).unwrap();
+
+            console.log("screens :: auth :: register :: register :: handleUserRegister :: response: ", response);
+        } catch (error) {
+            console.log("screens :: auth :: register :: register :: handleUserRegister :: error: ", error);
+            const message = getErrorMessage(error);
+            Alert.alert("Error", message);
+        }
+    }
+
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -22,36 +57,54 @@ const Register = () => {
                     </View>
 
                     <View className="p-5">
-                        <InputField
-                            label="Name"
-                            placeholder="Enter name"
-                            icon={user}
-                            value={form.name}
-                            onChangeText={(value) => setForm({ ...form, name: value })}
-                        />
-                        <InputField
-                            label="Email"
-                            placeholder="Enter email"
-                            icon={envelope}
-                            textContentType="emailAddress"
-                            value={form.email}
-                            onChangeText={(value) => setForm({ ...form, email: value })}
-                        />
-                        <InputField
-                            label="Password"
-                            placeholder="Enter password"
-                            icon={lock}
-                            secureTextEntry={true}
-                            textContentType="password"
-                            value={form.password}
-                            onChangeText={(value) => setForm({ ...form, password: value })}
-                        />
+                        <Formik
+                            initialValues={{
+                                name: "",
+                                email: "",
+                                password: "",
+                            }}
+                            // validationSchema = {}
+                            onSubmit={(values) => handleUserRegister(values)}
+                        >
+                            {({ handleSubmit, handleBlur, handleChange, values, errors, touched, setFieldValue }) => (
+                                <>
+                                    <InputField
+                                        label="Name"
+                                        placeholder="Enter name"
+                                        icon={user}
+                                        value={values.name}
+                                        onChangeText={handleChange('name')}
+                                        onBlur={handleBlur('name')}
+                                    />
+                                    <InputField
+                                        label="Email"
+                                        placeholder="Enter email"
+                                        icon={envelope}
+                                        textContentType="emailAddress"
+                                        value={values.email}
+                                        onChangeText={handleChange('email')}
+                                        onBlur={handleBlur('email')}
+                                    />
+                                    <InputField
+                                        label="Password"
+                                        placeholder="Enter password"
+                                        icon={lock}
+                                        secureTextEntry={true}
+                                        textContentType="password"
+                                        value={values.password}
+                                        onChangeText={handleChange('password')}
+                                        onBlur={handleBlur('password')}
+                                    />
 
-                        <CustomButton
-                            title="Create Account"
-                            onPress={() => Alert.alert("Register")}
-                            className="mt-6"
-                        />
+                                    <CustomButton
+                                        onPress={handleSubmit}
+                                        title="Create Account"
+                                        className="mt-6"
+                                    />
+                                </>
+                            )
+                            }
+                        </Formik>
                     </View>
                 </View>
             </ScrollView>

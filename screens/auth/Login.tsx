@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Alert, Image, ScrollView, Text, View, TouchableWithoutFeedback } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -15,6 +14,10 @@ interface LoginFormData {
     email: string,
     password: string
 }
+const getErrorMessage = (error: any) => {
+    const message = error?.message || "Something went wrong";
+    return message.replace(/^AppwriteException:\s*/, "");
+}
 
 const Login = () => {
     const navigation = useNavigation<loginScreenNavigationProp>();
@@ -29,8 +32,10 @@ const Login = () => {
 
             if (isSuccess) {
             }
-        } catch (error) {
+        } catch (error: any) {
             console.log("screens :: auth :: login :: login :: handleUserLogin :: error: ", error);
+            const message = getErrorMessage(error);
+            Alert.alert("Error", message);
         }
     }
 

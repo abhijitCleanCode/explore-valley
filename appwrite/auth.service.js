@@ -54,7 +54,9 @@ export class AuthService {
         throw new Error('Failed to sign in user');
       }
 
-      return session;
+      const logginUserDetails = await getCurrentUser();
+
+      return { session, logginUserDetails };
     } catch (error) {
       console.log('appwrite :: auth.service :: signInUser :: error: ', error);
       throw new Error(error);
@@ -68,19 +70,30 @@ export class AuthService {
         throw new Error('Failed to get current user');
       }
 
-      const currentUser = await this.databases.listDocuments(
-        appwriteConfig.databaseId,
-        appwriteConfig.userCollectionId,
-        [Query.equal('accoundId', currentAccount.$id)]
-      );
-      if (!currentUser) {
-        throw new Error('User not found');
-      }
-      console.log('appwrite :: auth.service :: getCurrentUser :: currentUser: ', currentUser);
+      // const currentUser = await this.databases.listDocuments(
+      //   appwriteConfig.databaseId,
+      //   appwriteConfig.userCollectionId,
+      //   [Query.equal('accoundId', currentAccount.$id)]
+      // );
+      // if (!currentUser) {
+      //   throw new Error('User not found');
+      // }
+      console.log('appwrite :: auth.service :: getCurrentUser :: currentUser: ', currentAccount);
 
-      return currentUser.documents[0];
+      return currentAccount;
     } catch (error) {
       console.log('appwrite :: auth.service :: getCurrentUser :: error: ', error);
+      throw new Error(error);
+    }
+  }
+
+  async signOutUser() {
+    try {
+      const session = await this.account.deleteSession('current');
+
+      return session;
+    } catch (error) {
+      console.log('appwrite :: auth.service :: signOutUser :: error: ', error);
       throw new Error(error);
     }
   }
