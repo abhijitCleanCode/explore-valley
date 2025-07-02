@@ -23,9 +23,9 @@ export class AuthService {
     try {
       const newAccount = await this.account.create(ID.unique(), email, password, name, role);
       if (!newAccount) throw new Error('Failed to create user');
+      console.log('appwrite :: auth.service :: createUser :: newAccount: ');
 
       // on successful account creation create a new profile pic with name initial
-      const avatarURL = this.avatars.getInitials(name);
 
       const newUser = await this.databases.createDocument(
         appwriteConfig.databaseId,
@@ -35,10 +35,12 @@ export class AuthService {
           name,
           email,
           accountId: newAccount.$id,
-          nameInitialAvatar: avatarURL,
+          // nameInitialAvatar: avatarURL,
           role,
         }
       );
+
+      await this.signInUser(email, password);
 
       return newUser;
     } catch (error) {
@@ -54,7 +56,7 @@ export class AuthService {
         throw new Error('Failed to sign in user');
       }
 
-      const logginUserDetails = await getCurrentUser();
+      const logginUserDetails = await this.getCurrentUser();
 
       return { session, logginUserDetails };
     } catch (error) {
@@ -70,15 +72,16 @@ export class AuthService {
         throw new Error('Failed to get current user');
       }
 
-      // const currentUser = await this.databases.listDocuments(
-      //   appwriteConfig.databaseId,
-      //   appwriteConfig.userCollectionId,
-      //   [Query.equal('accoundId', currentAccount.$id)]
-      // );
-      // if (!currentUser) {
-      //   throw new Error('User not found');
-      // }
-      console.log('appwrite :: auth.service :: getCurrentUser :: currentUser: ', currentAccount);
+      const currentUser = await this.databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.userCollectionId,
+        [Query.equal('accountId', currentAccount.$id)]
+      );
+      if (!currentUser) {
+        throw new Error('User not found');
+      }
+      console.log('appwrite :: auth.service :: getCurrentUser :: currentUser: ', currentUser);
+      console.log('appwrite :: auth.service :: getCurrentUser :: currentAccount: ', currentAccount);
 
       return currentAccount;
     } catch (error) {

@@ -32,18 +32,14 @@ const Register = () => {
             const response = await createUser(data).unwrap();
 
             console.log("screens :: auth :: register :: register :: handleUserRegister :: response: ", response);
+
+            navigation.navigate("Tabs")
         } catch (error) {
             console.log("screens :: auth :: register :: register :: handleUserRegister :: error: ", error);
             const message = getErrorMessage(error);
             Alert.alert("Error", message);
         }
     }
-
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-    });
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>

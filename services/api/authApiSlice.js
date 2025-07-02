@@ -76,7 +76,7 @@ export const authApiSlice = apiCore.injectEndpoints({
       },
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {
